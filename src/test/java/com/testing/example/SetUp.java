@@ -70,15 +70,13 @@ public class SetUp {
                 Log.Error(info);
             }
         } else if (platform.equalsIgnoreCase("web")) {
-//            System.setProperty("webdriver.gecko.driver", "/Users/ivanwidyan/Desktop/Ivan-Widyan/Tools/GeckoDriver/geckodriver");
-            System.setProperty("webdriver.gecko.driver", "/lib/geckodriver-v0.21.0/geckodriver.exe");
-            Handler.SetCurrentWebDriver(new FirefoxDriver());
+    WebDriverManager.firefoxdriver().setup(); // Automatically downloads and sets driver
+    Handler.SetCurrentWebDriver(new FirefoxDriver());
 
-            Handler.GetCurrentWebDriver().manage().timeouts().implicitlyWait(ConfigConstants.DEFAULT_TIMEOUT, TimeUnit.SECONDS);
+    Handler.GetCurrentWebDriver().manage().timeouts().implicitlyWait(ConfigConstants.DEFAULT_TIMEOUT, TimeUnit.SECONDS);
 
-            String url = "https://www.example.com/en";
-
-            Handler.GetCurrentWebDriver().get(url);
+    String url = "https://www.example.com/en";
+    Handler.GetCurrentWebDriver().get(url);
         }
     }
 
