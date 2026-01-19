@@ -70,8 +70,7 @@ public class SetUp {
                 Log.Error(info);
             }
         } else if (platform.equalsIgnoreCase("web")) {
-            System.setProperty("webdriver.gecko.driver", "C:\Users\darah\Downloads\geckodriver-v0.36.0-win64.zip"); 
-            System.setProperty("webdriver.gecko.driver", "/lib/geckodriver-v0.36.0/geckodriver.exe"); 
+            System.setProperty("webdriver.gecko.driver", "C:\\Users\\darah\\Downloads\\geckodriver-v0.36.0-win64\\geckodriver.exe");
             Handler.SetCurrentWebDriver(new FirefoxDriver()); 
             Handler.GetCurrentWebDriver().manage().timeouts().implicitlyWait(ConfigConstants.DEFAULT_TIMEOUT, TimeUnit.SECONDS); 
             String url = "https://www.example.com/en"; Handler.GetCurrentWebDriver().get(url);
