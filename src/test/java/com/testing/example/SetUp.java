@@ -1,10 +1,3 @@
-/*
- * Copyright (c) 2018. Ivan Widyan - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Email: ivanwidyan@yahoo.com
- */
-
 package com.testing.example;
 
 import com.testing.Handler;
@@ -33,14 +26,11 @@ public class SetUp {
     public void SetUp(String platform, @Optional String browser, @Optional String devicename,
                       @Optional String udid, @Optional String ip, @Optional String port) throws Exception {
 
-        String info = "";
-
-        Log.Error("Test " + platform);
+        Log.Debug("Platform: " + platform);
 
         if (platform.equalsIgnoreCase("android")) {
-            if (com.testing.Handler.GetCurrentAppiumDriver() == null) {
-                if (devicename == null)
-                    devicename = ExampleConfigConstants.DEVICE_NAME;
+            if (Handler.GetCurrentAppiumDriver() == null) {
+                if (devicename == null) devicename = ExampleConfigConstants.DEVICE_NAME;
 
                 DesiredCapabilities capabilities = new DesiredCapabilities();
                 capabilities.setCapability(ConfigConstants.CAPABILITIES_DEVICE_NAME, devicename);
@@ -49,54 +39,50 @@ public class SetUp {
                 capabilities.setCapability(ConfigConstants.CAPABILITIES_APP_PACKAGE, ExampleConfigConstants.APP_PACKAGE);
                 capabilities.setCapability(ConfigConstants.CAPABILITIES_APP_ACTIVITY, ExampleConfigConstants.APP_ACTIVITY);
 
-                if (udid != null)
-                    capabilities.setCapability(ConfigConstants.CAPABILITIES_UDID, udid);
-
-                if (ip == null)
-                    ip = ExampleConfigConstants.DEFAULT_IP;
-
-                if (port == null)
-                    port = ExampleConfigConstants.DEFAULT_PORT;
+                if (udid != null) capabilities.setCapability(ConfigConstants.CAPABILITIES_UDID, udid);
+                if (ip == null) ip = ExampleConfigConstants.DEFAULT_IP;
+                if (port == null) port = ExampleConfigConstants.DEFAULT_PORT;
 
                 String url = "http://" + ip + ":" + port + "/wd/hub";
                 Handler.SetCurrentAppiumDriver(new AndroidDriver(new URL(url), capabilities));
 
-                info = "SetUp Appium Driver for Device = " + com.testing.Handler.GetCurrentAppiumDriver()
-                        .getCapabilities().getCapability(ConfigConstants.CAPABILITIES_DEVICE_NAME);
-                Log.Debug(info);
-
-            } else {
-                info = "Duplicate Appium driver in the same thread";
-                Log.Error(info);
+                Log.Debug("Appium Driver set up for device: " + Handler.GetCurrentAppiumDriver()
+                        .getCapabilities().getCapability(ConfigConstants.CAPABILITIES_DEVICE_NAME));
             }
         } else if (platform.equalsIgnoreCase("web")) {
-            System.setProperty("webdriver.gecko.driver", "C:\\Users\\darah\\Downloads\\geckodriver-v0.36.0-win64\\geckodriver.exe");
-            Handler.SetCurrentWebDriver(new FirefoxDriver()); 
-            Handler.GetCurrentWebDriver().manage().timeouts().implicitlyWait(ConfigConstants.DEFAULT_TIMEOUT, TimeUnit.SECONDS); 
-            String url = "https://www.example.com/en"; Handler.GetCurrentWebDriver().get(url);
+            // Path to your downloaded geckodriver
+            System.setProperty("webdriver.gecko.driver",
+                    "C:\\Users\\darah\\Downloads\\geckodriver-v0.36.0-win64\\geckodriver.exe");
+
+            // Initialize Firefox WebDriver
+            Handler.SetCurrentWebDriver(new FirefoxDriver());
+            Handler.GetCurrentWebDriver().manage().timeouts()
+                    .implicitlyWait(ConfigConstants.DEFAULT_TIMEOUT, TimeUnit.SECONDS);
+
+            // Navigate to Google
+            String url = "https://www.google.com";
+            Handler.GetCurrentWebDriver().get(url);
+            Log.Debug("Navigated to: " + url);
         }
     }
 
     @AfterTest
     public void AfterTest() {
         if (Handler.GetCurrentAppiumDriver() != null) {
-            String info = "Quit Driver for Device = " + com.testing.Handler.GetCurrentAppiumDriver()
-                    .getCapabilities().getCapability(ConfigConstants.CAPABILITIES_DEVICE_NAME);
-            Log.Debug(info);
+            Log.Debug("Quitting Appium driver for device: " + Handler.GetCurrentAppiumDriver()
+                    .getCapabilities().getCapability(ConfigConstants.CAPABILITIES_DEVICE_NAME));
             Handler.GetCurrentAppiumDriver().quit();
         }
 
         if (Handler.GetCurrentWebDriver() != null) {
-            String info = "Quit Driver for Web Driver = " + com.testing.Handler.GetCurrentWebDriver();
-            Log.Debug(info);
+            Log.Debug("Quitting WebDriver");
             Handler.GetCurrentWebDriver().quit();
         }
     }
 
     @AfterSuite
-    public void AfterSuite() throws Exception {
-        String info = "Clear Driver Hashmap";
-        Log.Debug(info);
+    public void AfterSuite() {
+        Log.Debug("Clearing driver hashmaps");
         Handler.ClearAppiumDriverHashmap();
         Handler.ClearWebDriverHashmap();
     }
